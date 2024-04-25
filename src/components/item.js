@@ -1,73 +1,101 @@
-import React from 'react';
+import React, { useState } from "react";
+
+import ItemAdd from "./ItemAdd";
 
 const Item = () => {
-  const puzzles = [
-    {
-      id: 1,
-      description: "Где правили фараоны??",
-      option1: "в Египте",
-      option2: "в Греции",
-      option3: "в Риме",
-      correct: 1
-    },
-    {
-      id: 2,
-      description: "Какой орган спасает тушканчика от перегрева?",
-      option1: "нос",
-      option2: "уши",
-      option3: "хвост",
-      correct: 2
-    },
-    {
-      id: 3,
-      description: "Какой гриб самый ядовитый?",
-      option1: "поганка",
-      option2: "мухомор",
-      option3: "лисичка",
-      correct: 2
-    },
-    {
-      id: 4,
-      description: "Чем является арбуз?",
-      option1: "фруктом",
-      option2: "овощем",
-      option3: "ягодой",
-      correct: 3
-    },
-    {
-      id: 5,
-      description: "Сколько копеек в 1 рубле?",
-      option1: "10",
-      option2: "100",
-      option3: "1000",
-      correct: 2
-    },
-    {
-      id: 6,
-      description: "Какую максимальную скорость может развивать гепард?",
-      option1: "70 км/ч",
-      option2: "80 км/ч",
-      option3: "более 90 км/ч",
-      correct: 3
-    }
-   
-  ];
+  const [itemArray, setItemArray] = useState([]);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [showAnswers, setShowAnswers] = useState(false);
+
+  const handleFormSubmit = (formData) => {
+    setItemArray([...itemArray, formData]);
+  };
+
+  const handleOptionChange = (itemId, option) => {
+    setUserAnswers({ ...userAnswers, [itemId]: option });
+  };
+
+  const handleShowAnswers = () => {
+    setShowAnswers(true);
+  };
+
+  const pageContent = itemArray.map((item, index) => {
+    const userAnswer = userAnswers[index];
+    const isCorrect = showAnswers && userAnswer === item.correct;
+
+    return (
+      <div key={index}>
+        <h3>{item.description}</h3>
+
+        <div className="options">
+          <div>
+            <input
+              id={`option-1-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option1}
+              onChange={() => handleOptionChange(index, item.option1)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-1-${index}`}>{item.option1}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-2-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option2}
+              onChange={() => handleOptionChange(index, item.option2)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-2-${index}`}>{item.option2}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-3-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option3}
+              onChange={() => handleOptionChange(index, item.option3)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-3-${index}`}>{item.option3}</label>
+          </div>
+
+          <div>
+            <input
+              id={`option-4-${index}`}
+              type="radio"
+              name={`option${index}`}
+              checked={userAnswer === item.option4}
+              onChange={() => handleOptionChange(index, item.option4)}
+              disabled={showAnswers}
+            />
+            <label htmlFor={`option-4-${index}`}>{item.option4}</label>
+          </div>
+        </div>
+        {showAnswers && (
+          <p className={isCorrect ? "correct" : "incorrect"}>
+            {isCorrect
+              ? "Верно!"
+              : `Не верно. Правильный ответ: ${item.correct}`}
+          </p>
+        )}
+      </div>
+    );
+  });
 
   return (
-    <div>
-      {}
-      {puzzles.map(puzzle => (
-        <div key={puzzle.id}>
-          <p>{puzzle.description}</p>
-          <ul>
-            <li>{puzzle.option1}</li>
-            <li>{puzzle.option2}</li>
-            <li>{puzzle.option3}</li>
-         
-          </ul>
-        </div>
-      ))}
-    </div>
+    <>
+      <ItemAdd onFormSubmit={handleFormSubmit} />
+
+      <button className="button" onClick={handleShowAnswers} disabled={showAnswers}>
+        Узнать ответы
+      </button>
+      {pageContent}
+    </>
   );
 };
 
